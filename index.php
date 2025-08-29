@@ -58,7 +58,7 @@
 
     <div class="main-content">
         <!-- https://animate.style/-->
-        <h2 class="animate__animated animate__backInLeft"> NUESTRAS PIZZAS </h2>
+        <h2 class="animate__animated animate__backInLeft"> NUESTRAS MEJORES PIZZAS </h2>
         <!-- https://fontawesome.com/search?ic=free -->
 
         <!-- carrito -->
