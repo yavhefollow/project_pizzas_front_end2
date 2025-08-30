@@ -9,11 +9,19 @@
 
 <body>
     <?php
-    
-    include_once("config_login.php");
-     $usr = $_POST['username'];
-    $pass = $_POST['password'];
-    $hashed_pass=hash('sha256',$pass);
+    session_start();
+    if ($_SESSION['logueado'] = true) {
+        include_once("config_login.php");
+        include_once("db.class.php");
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $link = new Db();
+            $usr = $_POST['username'];
+            $pass = $_POST['password'];
+            $hashed_pass = hash('sha256', $pass);
+            $sql = "select * from users where (username=? or email=?) and pasword=? and active='SI'";
+            $stmt = $stmt->fetch(PDO::FETCH_ASSOC);
+        }
+    }
 
     try {
         $pdo = new PDO("mysql:host=" . SERVER_NAME . ";dbname=" . DATABASE_NAME, USER_NAME, PASSWORD);
@@ -23,42 +31,48 @@
     } catch (PDOException $e) {
         echo "Connection failed: " . $e->getMessage();
     }
-   
-    
+
+    /* 
 // $sql="select * from users where (username=? or email=?) and password=?";
-$sql = "select * from users where (username=? or email=?) and password= ? and active='SI'";
+$sql = "select * from users where (username=? or email=?) and password= ? and active='SI'";*/
 
 
-// Use de sentencias prepared
+    // Use de sentencias prepared
 
-// Uso de POO- Programacion Orientada a Objeto   nombre_objeto->propiedad/metodo
+    // Uso de POO- Programacion Orientada a Objeto   nombre_objeto->propiedad/metodo
 
-$stmt= $pdo->prepare($sql);
+    $stmt = $pdo->prepare($sql);
 
-$stmt ->execute([$usr,$usr,$hashed_pass]);
+    $stmt->execute([$usr, $usr, $hashed_pass]);
 
-$row=$stmt ->fetch(PDO::FETCH_ASSOC);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-//VALIDAR CONTRASEÑA Y USUARIO
-if(!$row){
-    // no ingresa
+    //VALIDAR CONTRASEÑA Y USUARIO
+    if (!$row) {
+    ?>
+        <div class="alert alert-danger">
+            <a href="login.html" class="close" data-dismiss="alert">×</a>
+            <div class="text-center">
+                <h5><strong>¡Error!</strong> Login Invalido.</h5>
+            </div>
+        </div>
+        // no ingresa
 
-    echo"Los datos ingreados no son validos !";
-
-}else
-{
-    //ingresando
-    session_start();
+        echo"Los datos ingreados no son validos !";
+    <?php
+    } else {
+        //ingresando
+        session_start();
         date_default_timezone_set('America/Argentina/Buenos_Aires');
         $_SESSION['time'] = date('H:i:s');
         $_SESSION['username'] = $usr;
         $_SESSION['logueado'] = true;
         header("location:welcome.php");  //crear una web .php
-}
+    }
     //Check if username exists
-//select * from users where (username='maria' or email='maria@bigdata.com') and password=SHA2('maria123456', 256);
+    //select * from users where (username='maria' or email='maria@bigdata.com') and password=SHA2('maria123456', 256);
 
-?>
+    ?>
 </body>
 
 </html>
