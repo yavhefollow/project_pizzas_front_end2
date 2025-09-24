@@ -9,7 +9,9 @@ if ($_SESSION['logueado']) {
     $price = $_POST['precio'];
     $category = $_POST['categoria'];
     $fechaIng = $_POST['fecha'];
-    $sql = "update products set product_name='$name',price='$price',id_category='$category',start_date='$fechaIng' where id_product=" . $id;
+    $img = $_POST['image'];
+
+    $sql = "update products set product_name='$name',price='$price',id_category='$category',start_date='$fechaIng',image='$img' where id_product=" . $id;
 
     
 
