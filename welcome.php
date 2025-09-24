@@ -1,25 +1,32 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
-    <script src="https://kit.fontawesome.com/de32933c53.js" crossorigin="anonymous"></script>
-    <title>Document</title>
+    <title>Welcome</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.dataTables.css" />
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdn.datatables.net/2.3.4/js/dataTables.js"></script>
 
 </head>
 
 <body>
-
-    <!-- font-awesome -->
     <nav class="navtop">
         <div>
             <h1>Panel Administrador</h1>
             <a href="logout.php"><i class="fas fa-sign-out-alt"></i>Logout</a>
         </div>
+
     </nav>
     <div class="content">
+
+
         <?php
         session_start();
         if ($_SESSION['logueado']) {
@@ -30,11 +37,8 @@
             echo "<br>";
             echo "<a href='insert_products.php'>INSERTAR PRODUCTOS</a>";
             echo "<br>";
-            //tabla de admin
-?>
-            
-            $table = "<table class='table table-bordered table-striped'>
-                    <thead class='thead-dark'>
+            $table = " <div class='table-responsive'><table class='table table-bordered table-striped' id='ourTable'>
+            <thead class='thead-dark'>
                 <tr>
                     <th>Id</th>
                     <th>Producto</th>
@@ -46,23 +50,15 @@
                 </tr>
             </thead>
             <tbody>";
-            <?php
             include_once("config_products.php");
             include_once("db.class.php");
             $link = new Db();
-            // Id del producto, descripción del producto, nombre de la categoria, precio, fecha de alta.
-            $sql = "SELECT products.id_product, products.price, products.product_name, products.start_date as date, categories.category_name FROM products  INNER JOIN categories ON products.id_category = categories.id_category";
-
-            //ejecuta la query
+            $sql = "select p.id_product,c.category_name,p.image,p.product_name,p.price, date_format(p.start_date,'%d/%m/%Y') as date from products p inner join categories c on p.id_category=c.id_category";
             $stmt = $link->run($sql);
-
-            //recupera la infor de la query y la guarda en $ data
             $data = $stmt->fetchAll();
-            /*echo $table;*/
-            //recorre
+            echo $table;
             foreach ($data as $row) {
         ?>
-
                 <tr>
                     <td>
                         <?php echo $row['id_product']; ?>
@@ -80,22 +76,51 @@
                         <?php echo $row['date']; ?>
                     </td>
                     <td>
-                        <a href="#"> Eliminar Producto</a>
+                        <a href="#" onclick="deleteProduct(<?php echo $row['id_product'] ?>)"> Eliminar Producto</a>
                     </td>
                     <td>
-                        <a href="#"> Actualizar Producto</a>
+                        <a href="#" onclick="updateProduct(<?php echo $row['id_product'] ?>)"> Actualizar Producto</a>
                     </td>
                 </tr>
-            <?php
-            }
-            ?>
-            </tbody>;
-            </table>;
         <?php
-        } //fin if de session
-        ?>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
-</body>
+            } // foreach
 
-</html>
+            $table = " </tbody>
+                </table> </div>";
+            echo $table;
+        }
+
+        ?>
+
+    </div>
+    <script>
+        let table = new DataTable('#ourTable', {
+            info: false,
+            ordering: true,
+            paging: false,
+            // Descargar el archivo es-MX.json desde la pagina: https://datatables.net/plug-ins/i18n/Spanish_Argentina.html
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/2.3.4/i18n/es-AR.json',
+            },
+        });
+
+        function deleteProduct(cod) {
+
+            bootbox.confirm("Desea ud. eliminar realmente el id " + cod, function(result) {
+                if (result) {
+                    window.location = "delete.php?q=" + cod;
+                }
+            });
+
+        }
+
+        function updateProduct(cod) {
+
+            window.location = "edit.php?q=" + cod;
+
+        }
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.min.js" integrity="sha512-ykZ1QQr0Jy/4ZkvKuqWn4iF3lqPZyij9iRv6sGqLRdTPkY69YX6+7wvVGmsdBbiIfN/8OdsI7HABjvEok6ZopQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/6.0.4/bootbox.min.js" integrity="sha512-l9O8NTlhknUJDJQlUVeavXJrtGEEYma4O29lRjEV7mO6DxXVvX9SWEIfnAlpnf+2T8LHTfsVuzttCDEMpIyaew==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</body>
