@@ -7,8 +7,8 @@ if ($_SESSION['logueado']) {
     include_once("db.class.php");
     $link = new Db();
     $idUpt = $_GET['q'];
-    $sql = "select p.id_product,p.id_category,p.product_name,p.price,p.start_date, p.image, c.category_name from products p inner join categories c on p.id_category=c.id_category where id_product=" . $idUpt;
-    $stmt = $link->run($sql);
+    $sql = "select p.id_product,p.id_category,p.product_name,p.price,p.start_date, p.image, c.category_name from products p inner join categories c on p.id_category=c.id_category where id_product=?";
+    $stmt = $link->run($sql,[$idUpt]);
     $data = $stmt->fetch();
 }
 
@@ -89,10 +89,13 @@ if ($_SESSION['logueado']) {
                         </small>
                     </div>
 
-                    <div class="text-center">
-                        <br>
-                        <input type="submit" class="btn btn-success" value="Guardar Producto">
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-success"> Guardar Producto </button>
+                        <!-- window.history.back() -- Vuelve atrás  -->
+                        <button type="button" class="btn btn-secondary mr-3" onclick="window.history.back()"> Cancelar </button>
                     </div>
+
+
                 </form>
             </div>
         </div>
