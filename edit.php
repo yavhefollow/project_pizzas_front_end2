@@ -71,9 +71,8 @@ if ($_SESSION['logueado']) {
                                 ?>
                             </select>
                         </div>
-
-
                     </div>
+                    
                     <div class="form-group">
                         <label class="control-label">FECHA DE ALTA</label>
                         <input id="nombre" name="fecha" class="form-control" type="date" value="<?php echo $data['start_date'] ?>">
